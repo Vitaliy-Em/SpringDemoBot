@@ -20,6 +20,5 @@ public class Ads {
 
     private String ad;
 
-    private String date;
 
 }

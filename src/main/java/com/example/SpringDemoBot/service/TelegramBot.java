@@ -358,15 +358,47 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         message.setText(textToSend);
         executeMessage(message);
     }
-    @Scheduled(cron = "${cron.scheduler}")
-    private void sendAds(){
+    @Scheduled(cron = "${cron.scheduler1}")
+    private void sendAds1(){
 
-        var ads =adsRepository.findAll();
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf(1));
+        Ads ad = ads.get();
         var users =userRepository.findAll();
-        for (Ads ad: ads){
             for (User user: users) {
                 prepareAndSendMessage(user.getChatId(), ad.getAd());
             }
+
+    }
+    @Scheduled(cron = "${cron.scheduler2}")
+    private void sendAds2(){
+
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf(2));
+        Ads ad = ads.get();
+        var users =userRepository.findAll();
+        for (User user: users) {
+            prepareAndSendMessage(user.getChatId(), ad.getAd());
+        }
+    }
+    @Scheduled(cron = "${cron.scheduler3}")
+    private void sendAds3(){
+
+
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf(3));
+        Ads ad = ads.get();
+        var users =userRepository.findAll();
+        for (User user: users) {
+            prepareAndSendMessage(user.getChatId(), ad.getAd());
+        }
+
+    }
+    @Scheduled(cron = "${cron.scheduler4}")
+    private void sendAds4(){
+
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf(4));
+        Ads ad = ads.get();
+        var users =userRepository.findAll();
+        for (User user: users) {
+            prepareAndSendMessage(user.getChatId(), ad.getAd());
         }
     }
 
