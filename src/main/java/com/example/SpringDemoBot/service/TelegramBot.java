@@ -334,7 +334,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         message.setText(textToSend);
         executeMessage(message);
     }
-    @Scheduled(cron = "0 10 7 * * 1-5")
+    @Scheduled(cron = "0 10 7 * * 1-5", zone = "GMT+3:00")
     private void sendAds1(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("1"));
@@ -345,7 +345,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
             }
 
     }
-    @Scheduled(cron = "0 0 13 * * *")
+    @Scheduled(cron = "0 0 13 * * *", zone = "GMT+3:00")
     private void sendAds2(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("2"));
@@ -355,7 +355,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
             prepareAndSendMessage(user.getChatId(), ad.getAd());
         }
     }
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = "0 0 19 * * *", zone = "GMT+3:00")
     private void sendAds3(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("3"));
@@ -366,14 +366,14 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         }
 
     }
-    @Scheduled(cron = "0 50 20 * * *")
+    @Scheduled(cron = "0 0 20 * * *", zone = "GMT+3:00")
     private void sendAds4(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("4"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
         for (User user: users) {
-            prepareAndSendMessage(user.getChatId(), ad.getAd());
+            prepareAndSendMessage(user.getChatId(), "Hi");
         }
     }
 
