@@ -43,6 +43,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
     private ProverbsRepository proverbsRepository;
 
+    @Autowired
+    private SecretsRepository secretsRepository;
+
+    private String answer;
+
     final BotConfig config;
 
     static final String HELP_TEXT= "This bot is created for demonstrate Spring capabilities.\n\n" +
@@ -50,19 +55,21 @@ public class TelegramBot extends TelegramLongPollingBot {
             "Type /start to see a welcome message\n\n"+
             "Type /mydata to see data stored about yourself\n\n"+
             "Type /deletedata to delete your data\n\n"+
-            "Type /help to see this message again\n\n"+
-            "Type /setting to set your preferences\n\n";
+            "Type /help to see this message again\n\n";
 
-    static final String YES_BUTTON = "YES_BUTTON";
-    static final String NO_BUTTON = "NO_BUTTON";
 
     static final String ESC_BUTTON = "Позанимались, можно и отдохнуть!";
 
     static final String ERROR_TEXT = "Error occurred: ";
 
-    int d;
+    private int d;
+
+    private int counter;
+
 
     private List <Long> processingUsers = new ArrayList<>();
+
+    private List <Long> processingUsersForSecret = new ArrayList<>();
 
     public TelegramBot(BotConfig config){
         this.config=config;
@@ -71,7 +78,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand("/mydata","get your data stored"));
         listOfCommands.add(new BotCommand("/deletedata", "delete my data"));
         listOfCommands.add(new BotCommand("/help", "info how to use this bot"));
-        listOfCommands.add(new BotCommand("/settings","set your preferences"));
+
 
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
@@ -80,8 +87,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         catch (TelegramApiException e){
             log.error("Error setting bot's command list: " + e.getMessage());
         }
-
-
 
     }
 
@@ -123,11 +128,6 @@ if(update.hasMessage()&& update.getMessage().hasText()){
 
                 break;
 
-            case "/register":
-
-                register(chatID);
-
-                break;
 
             case "Пример для Ани":
                 processingUsers.add(update.getMessage().getFrom().getId());
@@ -151,7 +151,16 @@ if(update.hasMessage()&& update.getMessage().hasText()){
                 break;
 
             case "Загадка":
-                prepareAndSendMessage(chatID, "Сидит девица в темнице, а коса на улице.\n"+"Правильно. Морковка!");
+                counter=3;
+                processingUsersForSecret.add(update.getMessage().getFrom().getId());
+                int j = (int)(Math.random()*19)+1;
+                Optional<Secrets> secrets = secretsRepository.findById(Long.valueOf(j));
+                Secrets secret = secrets.get();
+                answer =secret.getAnswer();
+                prepareAndSendMessage(chatID, secret.getSecret());
+                prepareAndSendMessage(chatID, "Напиши что это!\n" +
+                        "У тебя 3 попытки.");
+
 
 
                 break;
@@ -193,14 +202,8 @@ if(update.hasMessage()&& update.getMessage().hasText()){
      long messageId = update.getCallbackQuery().getMessage().getMessageId();
      long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-     if (callbackData.equals(YES_BUTTON)){
-       String text = "You pressed YES button";
-         executeEditMessageText(text, chatId, messageId);
-     } else if (callbackData.equals(NO_BUTTON)) {
-         String text = "You pressed NO button";
-         executeEditMessageText(text, chatId, messageId);
-     }
-     else if (callbackData.equals(ESC_BUTTON)){
+
+      if (callbackData.equals(ESC_BUTTON)){
          String text = "Позанимались, можно и отдохнуть!";
          executeEditMessageText(text, chatId, messageId);
          processingUsers.clear();
@@ -212,34 +215,7 @@ if(update.hasMessage()&& update.getMessage().hasText()){
 
     }
 
-    private void register(long chatId) {
 
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Do you really want to register?");
-
-        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-        var yesButton = new InlineKeyboardButton();
-
-        yesButton.setText("Yes");
-        yesButton.setCallbackData(YES_BUTTON);
-
-        var noButton = new InlineKeyboardButton();
-        noButton.setText("No");
-        noButton.setCallbackData(NO_BUTTON);
-
-        rowInLine.add(yesButton);
-        rowInLine.add(noButton);
-
-        rowsInLine.add(rowInLine);
-
-        markupInLine.setKeyboard(rowsInLine);
-        message.setReplyMarkup(markupInLine);
-
-        executeMessage(message);
-    }
 
     private void registerUser(Message msg){
 
@@ -361,7 +337,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
     @Scheduled(cron = "${cron.scheduler1}")
     private void sendAds1(){
 
-        Optional<Ads> ads = adsRepository.findById(Long.valueOf(1));
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf("1"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
             for (User user: users) {
@@ -372,7 +348,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
     @Scheduled(cron = "${cron.scheduler2}")
     private void sendAds2(){
 
-        Optional<Ads> ads = adsRepository.findById(Long.valueOf(2));
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf("2"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
         for (User user: users) {
@@ -383,7 +359,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
     private void sendAds3(){
 
 
-        Optional<Ads> ads = adsRepository.findById(Long.valueOf(3));
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf("3"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
         for (User user: users) {
@@ -394,7 +370,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
     @Scheduled(cron = "${cron.scheduler4}")
     private void sendAds4(){
 
-        Optional<Ads> ads = adsRepository.findById(Long.valueOf(4));
+        Optional<Ads> ads = adsRepository.findById(Long.valueOf("4"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
         for (User user: users) {
@@ -478,6 +454,36 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
                 message.setReplyMarkup(markupInLine);
 
                 executeMessage(message);
+            }
+        }
+        else if (processingUsersForSecret.contains(userId)) {
+            String yourAnswer = update.getMessage().getText();
+
+            if (answer.equalsIgnoreCase(yourAnswer)) {
+                prepareAndSendMessage(chatID, "Правильно!");
+                processingUsers.remove(userId);
+            } else {
+                counter--;
+
+                if (counter == 2) {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(String.valueOf(chatID));
+                    message.setText("А вот и нет! У тебя осталось 2 попытки!");
+                    executeMessage(message);
+                }
+                else if (counter == 1) {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(String.valueOf(chatID));
+                    message.setText("Снова нет! У тебя осталась 1 попытка!");
+                    executeMessage(message);
+                }
+                else if (counter ==0) {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(String.valueOf(chatID));
+                    message.setText("Неа! Правильный ответ: "+ answer);
+                    executeMessage(message);
+                }
+
             }
         }
         else {
