@@ -461,7 +461,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
 
             if (answer.equalsIgnoreCase(yourAnswer)) {
                 prepareAndSendMessage(chatID, "Правильно!");
-                processingUsers.remove(userId);
+                processingUsersForSecret.remove(userId);
             } else {
                 counter--;
 
@@ -482,6 +482,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
                     message.setChatId(String.valueOf(chatID));
                     message.setText("Неа! Правильный ответ: "+ answer);
                     executeMessage(message);
+                    processingUsersForSecret.remove(userId);
                 }
 
             }
