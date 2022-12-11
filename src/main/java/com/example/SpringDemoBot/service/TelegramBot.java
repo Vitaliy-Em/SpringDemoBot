@@ -292,9 +292,9 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
 
         row = new KeyboardRow();
 
-        row.add("Шутка");
+        row.add("Прогноз погоды на сегодня");
         row.add("Загадка");
-        row.add("Пословица");
+        row.add("Учим английский");
 
         keyboardRows.add(row);
 
@@ -334,7 +334,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         message.setText(textToSend);
         executeMessage(message);
     }
-    @Scheduled(cron = "${cron.scheduler1}")
+    @Scheduled(cron = "0 10 7 * * 1-5")
     private void sendAds1(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("1"));
@@ -345,7 +345,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
             }
 
     }
-    @Scheduled(cron = "${cron.scheduler2}")
+    @Scheduled(cron = "0 0 13 * * *")
     private void sendAds2(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("2"));
@@ -355,9 +355,8 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
             prepareAndSendMessage(user.getChatId(), ad.getAd());
         }
     }
-    @Scheduled(cron = "${cron.scheduler3}")
+    @Scheduled(cron = "0 0 19 * * *")
     private void sendAds3(){
-
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("3"));
         Ads ad = ads.get();
@@ -367,7 +366,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         }
 
     }
-    @Scheduled(cron = "${cron.scheduler4}")
+    @Scheduled(cron = "0 50 20 * * *")
     private void sendAds4(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("4"));
