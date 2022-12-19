@@ -366,14 +366,14 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
         }
 
     }
-    @Scheduled(cron = "0 0 20 * * *", zone = "GMT+3:00")
+    @Scheduled(cron = "0 0 21 * * *", zone = "GMT+3:00")
     private void sendAds4(){
 
         Optional<Ads> ads = adsRepository.findById(Long.valueOf("4"));
         Ads ad = ads.get();
         var users =userRepository.findAll();
         for (User user: users) {
-            prepareAndSendMessage(user.getChatId(), "Hi");
+            prepareAndSendMessage(user.getChatId(), ad.getAd());
         }
     }
 
