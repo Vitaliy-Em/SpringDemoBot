@@ -6,6 +6,7 @@ import com.example.SpringDemoBot.model.*;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.Reader;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -144,8 +145,18 @@ if(update.hasMessage()&& update.getMessage().hasText()){
 
                 break;
 
-            case "Шутка":
-                prepareAndSendMessage(chatID, "Пока не смешно(");
+            case "Прогноз погоды на сегодня":
+                try {
+                    var document = Jsoup.connect("https://yandex.ru/pogoda/moscow?lat=55.755863&lon=37.6177").get();
+                    var element = document.select("div[class=title-icon__text]").first().text();
+                    prepareAndSendMessage(chatID, element);
+
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
 
 
                 break;
