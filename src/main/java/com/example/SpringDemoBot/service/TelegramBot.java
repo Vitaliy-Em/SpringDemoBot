@@ -67,6 +67,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private int counter;
 
+    private int counterOfSecrets=1;
+
 
     private List <Long> processingUsers = new ArrayList<>();
 
@@ -164,8 +166,7 @@ if(update.hasMessage()&& update.getMessage().hasText()){
             case "Загадка":
                 counter=3;
                 processingUsersForSecret.add(update.getMessage().getFrom().getId());
-                int j = (int)(Math.random()*19)+1;
-                Optional<Secrets> secrets = secretsRepository.findById(Long.valueOf(j));
+                Optional<Secrets> secrets = secretsRepository.findById((long) counterOfSecrets);
                 Secrets secret = secrets.get();
                 answer =secret.getAnswer();
                 prepareAndSendMessage(chatID, secret.getSecret());
@@ -176,7 +177,7 @@ if(update.hasMessage()&& update.getMessage().hasText()){
 
                 break;
 
-            case "Пословица":
+            case "Учим английский":
                 int i = (int)(Math.random()*9)+1;
                 Optional<Proverb> proverbs = proverbsRepository.findById(Long.valueOf(i));
                 Proverb proverb = proverbs.get();
@@ -472,6 +473,9 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
             if (answer.equalsIgnoreCase(yourAnswer)) {
                 prepareAndSendMessage(chatID, "Правильно!");
                 processingUsersForSecret.remove(userId);
+                if (counterOfSecrets<20)
+                counterOfSecrets++;
+                else counterOfSecrets=1;
             } else {
                 counter--;
 
@@ -493,6 +497,9 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
                     message.setText("Неа! Правильный ответ: "+ answer);
                     executeMessage(message);
                     processingUsersForSecret.remove(userId);
+                    if (counterOfSecrets<20)
+                        counterOfSecrets++;
+                    else counterOfSecrets=1;
                 }
 
             }
