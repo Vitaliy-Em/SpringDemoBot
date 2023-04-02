@@ -132,14 +132,14 @@ if(update.hasMessage()&& update.getMessage().hasText()){
                 break;
 
 
-            case "Пример для Ани":
+            case "Пример на сложение/вычитание":
                 processingUsers.add(update.getMessage().getFrom().getId());
                 prepareAndSendMessage(chatID, generateMathForAnn());
                 prepareAndSendMessage(chatID, "Напиши результат");
 
                 break;
 
-            case "Пример для Полины":
+            case "Пример посложнее":
                 processingUsers.add(update.getMessage().getFrom().getId());
                 prepareAndSendMessage(chatID, generateMathForPolly());
                 prepareAndSendMessage(chatID, "Напиши результат");
@@ -177,15 +177,7 @@ if(update.hasMessage()&& update.getMessage().hasText()){
 
                 break;
 
-            case "Учим английский":
-                int i = (int)(Math.random()*9)+1;
-                Optional<Proverb> proverbs = proverbsRepository.findById(Long.valueOf(i));
-                Proverb proverb = proverbs.get();
 
-                prepareAndSendMessage(chatID, proverb.getProverb());
-
-
-                break;
 
             case "/mydata":
                 prepareAndSendMessage(chatID, getUserData(update.getMessage()));
@@ -296,8 +288,8 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
 
         KeyboardRow row = new KeyboardRow();
 
-        row.add("Пример для Ани");
-        row.add("Пример для Полины");
+        row.add("Пример на сложение/вычитание");
+        row.add("Пример посложнее");
 
 
         keyboardRows.add(row);
@@ -306,7 +298,7 @@ return "Ваши данные :\n" + name + " " + lastName + "\n" + "Hик: " + 
 
         row.add("Прогноз погоды на сегодня");
         row.add("Загадка");
-        row.add("Учим английский");
+
 
         keyboardRows.add(row);
 
